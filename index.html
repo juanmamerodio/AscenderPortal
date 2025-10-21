@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso al Contenido - Ascender</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .ascender-gradient { background: linear-gradient(90deg, #4F46E5, #8B5CF6); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <main class="min-h-screen flex flex-col items-center justify-center p-4">
+        <div id="login-container" class="w-full max-w-md">
+            <div class="text-center mb-8">
+                <!-- Icono -->
+                <svg class="mx-auto h-12 w-auto text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                <h1 class="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">Portal Seguro</h1>
+                <p class="mt-2 text-lg leading-8 text-gray-400">El acceso está protegido.</p>
+            </div>
+
+            <form id="login-form" class="space-y-6 bg-gray-800 p-8 rounded-lg shadow-2xl">
+                <!-- Campos del formulario -->
+                 <div>
+                    <label for="id_acceso" class="block text-sm font-medium leading-6 text-gray-300">ID de Acceso</label>
+                    <div class="mt-2">
+                        <input id="id_acceso" name="id_acceso" type="text" required class="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label for="correo" class="block text-sm font-medium leading-6 text-gray-300">Correo Electrónico</label>
+                    <div class="mt-2">
+                        <input id="correo" name="correo" type="email" autocomplete="email" required class="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <button type="submit" id="submit-button" class="flex w-full justify-center rounded-md ascender-gradient px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-90 disabled:opacity-50">
+                        <span id="button-text">Verificar y Acceder</span>
+                        <span id="button-spinner" class="hidden"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></span>
+                    </button>
+                </div>
+                <div id="error-message" class="text-red-400 text-center text-sm pt-2" style="display: none;"></div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // --- CONFIGURACIÓN DEL CLIENTE ---
+        // Ahora la URL apunta a nuestra propia ruta de proxy, no a Google.
+        const SCRIPT_URL = '/api'; // <-- ¡ESTE ES EL ÚNICO CAMBIO!
+
+        const loginForm = document.getElementById('login-form');
+        const errorMessageDiv = document.getElementById('error-message');
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+        const buttonSpinner = document.getElementById('button-spinner');
+
+        // Muestra errores que vienen en la URL (ej. token expirado)
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const error = params.get('error');
+            if (error) {
+                displayErrorFromUrl(error);
+            }
+        });
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            setLoading(true);
+            errorMessageDiv.style.display = 'none';
+            
+            const id = document.getElementById('id_acceso').value;
+            const correo = document.getElementById('correo').value;
+            const postData = { action: 'login', ID: id, correo: correo };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(postData),
+                    redirect: 'follow'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Redirigir a la pasarela de acceso con el token
+                    window.location.href = result.redirectUrl;
+                } else {
+                    showError(result.message || 'Error desconocido.');
+                }
+            } catch (error) {
+                console.error('Error de Fetch:', error);
+                showError('Error de comunicación. Inténtalo de nuevo.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function displayErrorFromUrl(errorCode) {
+            const errorMap = {
+                'invalid_token': 'El enlace de acceso no es válido o es incorrecto.',
+                'token_expired': 'Tu sesión ha expirado. Por favor, ingresa de nuevo.',
+                'token_used': 'Este enlace de acceso ya ha sido utilizado.',
+                'server_error': 'Ocurrió un error en el servidor. Inténtalo de nuevo.'
+            };
+            showError(errorMap[errorCode] || 'Ha ocurrido un error inesperado.');
+        }
+
+        function showError(message) {
+            errorMessageDiv.textContent = message;
+            errorMessageDiv.style.display = 'block';
+        }
+
+        function setLoading(isLoading) {
+            submitButton.disabled = isLoading;
+            buttonText.style.display = isLoading ? 'none' : 'inline-block';
+            buttonSpinner.style.display = isLoading ? 'inline-block' : 'none';
+        }
+    </script>
+</body>
+</html>
+
+
