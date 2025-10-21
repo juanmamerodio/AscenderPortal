@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Acceso al Contenido - Ascender</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,6 +12,9 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         .ascender-gradient { background: linear-gradient(90deg, #4F46E5, #8B5CF6); }
+        .pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -17,92 +22,213 @@
     <main class="min-h-screen flex flex-col items-center justify-center p-4">
         <div id="login-container" class="w-full max-w-md">
             <div class="text-center mb-8">
-                <!-- Icono -->
-                <svg class="mx-auto h-12 w-auto text-indigo-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                <!-- Icono con animación sutil -->
+                <svg class="mx-auto h-12 w-auto text-indigo-400 pulse-slow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                </svg>
                 <h1 class="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">Portal Seguro</h1>
                 <p class="mt-2 text-lg leading-8 text-gray-400">El acceso está protegido.</p>
             </div>
 
             <form id="login-form" class="space-y-6 bg-gray-800 p-8 rounded-lg shadow-2xl">
-                <!-- Campos del formulario -->
-                 <div>
+                <!-- ID de Acceso -->
+                <div>
                     <label for="id_acceso" class="block text-sm font-medium leading-6 text-gray-300">ID de Acceso</label>
                     <div class="mt-2">
-                        <input id="id_acceso" name="id_acceso" type="text" required class="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                        <input 
+                            id="id_acceso" 
+                            name="id_acceso" 
+                            type="text" 
+                            required 
+                            autocomplete="username"
+                            maxlength="50"
+                            class="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                            placeholder="Ingresa tu ID"
+                        >
                     </div>
                 </div>
+                
+                <!-- Correo Electrónico -->
                 <div>
                     <label for="correo" class="block text-sm font-medium leading-6 text-gray-300">Correo Electrónico</label>
                     <div class="mt-2">
-                        <input id="correo" name="correo" type="email" autocomplete="email" required class="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                        <input 
+                            id="correo" 
+                            name="correo" 
+                            type="email" 
+                            autocomplete="email" 
+                            required 
+                            maxlength="100"
+                            class="block w-full rounded-md border-0 bg-white/5 py-2 px-3 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                            placeholder="tu@email.com"
+                        >
                     </div>
                 </div>
+                
+                <!-- Botón de Submit -->
                 <div>
-                    <button type="submit" id="submit-button" class="flex w-full justify-center rounded-md ascender-gradient px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-90 disabled:opacity-50">
+                    <button 
+                        type="submit" 
+                        id="submit-button" 
+                        class="flex w-full justify-center items-center rounded-md ascender-gradient px-3 py-2.5 text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+                    >
                         <span id="button-text">Verificar y Acceder</span>
-                        <span id="button-spinner" class="hidden"><svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></span>
+                        <span id="button-spinner" class="hidden">
+                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </span>
                     </button>
                 </div>
-                <div id="error-message" class="text-red-400 text-center text-sm pt-2" style="display: none;"></div>
+                
+                <!-- Mensaje de Error -->
+                <div id="error-message" class="text-red-400 text-center text-sm pt-2 hidden"></div>
             </form>
         </div>
     </main>
 
     <script>
-        // --- CONFIGURACIÓN DEL CLIENTE ---
-        // Ahora la URL apunta a nuestra propia ruta de proxy, no a Google.
-        const SCRIPT_URL = '/api'; // <-- ¡ESTE ES EL ÚNICO CAMBIO!
-
+        // ═══════════════════════════════════════════════════════════════
+        // 🔒 CONFIGURACIÓN DEL CLIENTE - VERSIÓN AUDITADA Y CORREGIDA
+        // ═══════════════════════════════════════════════════════════════
+        
+        // 🔒 CRÍTICO: Ruta del proxy (cambio de /api a ruta específica)
+        const API_ENDPOINT = '/portal-seguro/auth';
+        
+        // Referencias al DOM
         const loginForm = document.getElementById('login-form');
         const errorMessageDiv = document.getElementById('error-message');
         const submitButton = document.getElementById('submit-button');
         const buttonText = document.getElementById('button-text');
         const buttonSpinner = document.getElementById('button-spinner');
+        const idInput = document.getElementById('id_acceso');
+        const correoInput = document.getElementById('correo');
 
-        // Muestra errores que vienen en la URL (ej. token expirado)
+        // ═══════════════════════════════════════════════════════════════
+        // 🔒 INICIALIZACIÓN Y MANEJO DE ERRORES DE URL
+        // ═══════════════════════════════════════════════════════════════
+        
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const error = params.get('error');
+            
             if (error) {
                 displayErrorFromUrl(error);
+                // 🔒 MEJORA: Limpiar la URL sin recargar la página
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
+
+            // 🔒 MEJORA: Auto-focus en el primer campo
+            idInput.focus();
         });
 
+        // ═══════════════════════════════════════════════════════════════
+        // 🔒 MANEJO DEL FORMULARIO
+        // ═══════════════════════════════════════════════════════════════
+        
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            setLoading(true);
-            errorMessageDiv.style.display = 'none';
             
-            const id = document.getElementById('id_acceso').value;
-            const correo = document.getElementById('correo').value;
-            const postData = { action: 'login', ID: id, correo: correo };
+            // 🔒 MEJORA: Validación en el cliente antes de enviar
+            const id = idInput.value.trim();
+            const correo = correoInput.value.trim().toLowerCase();
+            
+            if (!id || !correo) {
+                showError('Por favor completa todos los campos.');
+                return;
+            }
+
+            // 🔒 MEJORA: Validación de formato de email
+            if (!isValidEmail(correo)) {
+                showError('El formato del correo electrónico no es válido.');
+                return;
+            }
+
+            setLoading(true);
+            hideError();
+            
+            const postData = { 
+                action: 'login', 
+                ID: id, 
+                correo: correo 
+            };
 
             try {
-                const response = await fetch(SCRIPT_URL, {
+                // 🔒 CRÍTICO: Petición al proxy (no a Google directamente)
+                const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
                     mode: 'cors',
                     cache: 'no-cache',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    credentials: 'same-origin',
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify(postData),
                     redirect: 'follow'
                 });
                 
+                // 🔒 MEJORA: Verificar que la respuesta sea JSON válido
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Respuesta inválida del servidor');
+                }
+
                 const result = await response.json();
                 
                 if (result.success) {
-                    // Redirigir a la pasarela de acceso con el token
-                    window.location.href = result.redirectUrl;
+                    // 🔒 CRÍTICO: La URL viene relativa, no expone el backend
+                    // Construir la URL completa desde el dominio actual
+                    const redirectUrl = result.redirectUrl.startsWith('http') 
+                        ? result.redirectUrl 
+                        : window.location.origin + result.redirectUrl;
+                    
+                    // 🔒 MEJORA: Feedback visual antes de redirigir
+                    buttonText.textContent = '¡Acceso autorizado! Redirigiendo...';
+                    buttonText.classList.add('text-green-300');
+                    
+                    // Redirigir después de un breve delay para que el usuario vea el mensaje
+                    setTimeout(() => {
+                        window.location.href = redirectUrl;
+                    }, 500);
                 } else {
                     showError(result.message || 'Error desconocido.');
                 }
             } catch (error) {
                 console.error('Error de Fetch:', error);
-                showError('Error de comunicación. Inténtalo de nuevo.');
+                
+                // 🔒 MEJORA: Mensajes de error más específicos
+                if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                    showError('No se pudo conectar con el servidor. Verifica tu conexión a internet.');
+                } else if (error.message.includes('JSON')) {
+                    showError('Error de comunicación con el servidor. Por favor, inténtalo de nuevo.');
+                } else {
+                    showError('Error inesperado. Por favor, inténtalo de nuevo.');
+                }
             } finally {
                 setLoading(false);
+                // 🔒 MEJORA: Restaurar el texto del botón si hubo error
+                if (!buttonText.classList.contains('text-green-300')) {
+                    buttonText.textContent = 'Verificar y Acceder';
+                }
             }
         });
 
+        // ═══════════════════════════════════════════════════════════════
+        // 🔒 FUNCIONES DE UTILIDAD
+        // ═══════════════════════════════════════════════════════════════
+        
+        /**
+         * 🔒 NUEVA FUNCIÓN: Valida formato de email
+         */
+        function isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        /**
+         * Muestra errores que vienen en la URL (ej. token expirado)
+         */
         function displayErrorFromUrl(errorCode) {
             const errorMap = {
                 'invalid_token': 'El enlace de acceso no es válido o es incorrecto.',
@@ -113,18 +239,62 @@
             showError(errorMap[errorCode] || 'Ha ocurrido un error inesperado.');
         }
 
+        /**
+         * Muestra un mensaje de error al usuario
+         */
         function showError(message) {
             errorMessageDiv.textContent = message;
-            errorMessageDiv.style.display = 'block';
+            errorMessageDiv.classList.remove('hidden');
+            
+            // 🔒 MEJORA: Scroll suave al error
+            errorMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
+        /**
+         * 🔒 NUEVA FUNCIÓN: Oculta el mensaje de error
+         */
+        function hideError() {
+            errorMessageDiv.classList.add('hidden');
+        }
+
+        /**
+         * Controla el estado de carga del formulario
+         */
         function setLoading(isLoading) {
             submitButton.disabled = isLoading;
             buttonText.style.display = isLoading ? 'none' : 'inline-block';
             buttonSpinner.style.display = isLoading ? 'inline-block' : 'none';
+            
+            // 🔒 MEJORA: Deshabilitar campos durante la carga
+            idInput.disabled = isLoading;
+            correoInput.disabled = isLoading;
         }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 🔒 MEJORA: Prevenir doble submit accidental
+        // ═══════════════════════════════════════════════════════════════
+        
+        let isSubmitting = false;
+        loginForm.addEventListener('submit', (event) => {
+            if (isSubmitting) {
+                event.preventDefault();
+                return;
+            }
+            isSubmitting = true;
+            setTimeout(() => { isSubmitting = false; }, 2000);
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // 🔒 MEJORA: Limpiar mensajes de error al editar
+        // ═══════════════════════════════════════════════════════════════
+        
+        [idInput, correoInput].forEach(input => {
+            input.addEventListener('input', () => {
+                if (!errorMessageDiv.classList.contains('hidden')) {
+                    hideError();
+                }
+            });
+        });
     </script>
 </body>
 </html>
-
-
